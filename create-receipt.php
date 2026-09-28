@@ -283,7 +283,7 @@ function feedebit() {
 
         }
     });
-}
+} 
 
 function Ledger_Status_debit(id) {
     if (!id) {
@@ -325,6 +325,9 @@ function CreateFeedebit() {
     var studentIdNo = document.getElementById('studentid').value;
     var debitparticulars = document.getElementById('debitparticulars').value;
     var debitdate = document.getElementById('debitdate').value;
+    var receiptdate = document.getElementById('receiptdate').value;
+    var receiptno = document.getElementById('receiptno').value;
+
       // Field-specific validation
       if (!debithead) return showErrorMessage("Please select Fee Head");
     if (!debitsession) return showErrorMessage("Please select Session");
@@ -333,43 +336,45 @@ function CreateFeedebit() {
     if (!studentIdNo) return showErrorMessage("Please enter Student Roll No");
     if (!debitparticulars) return showErrorMessage("Please enter Particulars");
     if (!debitdate) return showErrorMessage("Please select Date");
+    if (!receiptdate) return showErrorMessage("Please select receipt Date");
+    if (!receiptno) return showErrorMessage("Enter ReceiptNo");
 
-    ShowLoader(); 
+    // ShowLoader(); 
            
-        $.ajax({
-            url: 'action-g.php',
-            type: 'POST',
-            data: {
-                code: 11,
-                particulars: debitparticulars,
-                debithead: debithead,
-                debitsession: debitsession,
-                debitsemester: debitsem,
-                debitremarks: debitremarks,
-                debitfee: debitfee,
-                studentid: studentIdNo,
-                debitdate: debitdate
-            },
-            success: function(response) {
-                feedebit();
-                HideLoader();
-                // console.log(response);
-                if (response == 1) {
-                    showSuccessMessage('Fee debit successfully added');
-                } else {
-                    showErrorMessage("Try After some time");
-                }
-            },
-            error: function(xhr, status, error) {
-                HideLoader();
-                console.error("AJAX Error:", error);
-                // alert("An error occurred while fetching data.");
-            },
-            complete: function() {
-                HideLoader();
+    //     $.ajax({
+    //         url: 'action-g.php',
+    //         type: 'POST',
+    //         data: {
+    //             code: 11,
+    //             particulars: debitparticulars,
+    //             debithead: debithead,
+    //             debitsession: debitsession,
+    //             debitsemester: debitsem,
+    //             debitremarks: debitremarks,
+    //             debitfee: debitfee,
+    //             studentid: studentIdNo,
+    //             debitdate: debitdate
+    //         },
+    //         success: function(response) {
+    //             feedebit();
+    //             HideLoader();
+    //             // console.log(response);
+    //             if (response == 1) {
+    //                 showSuccessMessage('Fee debit successfully added');
+    //             } else {
+    //                 showErrorMessage("Try After some time");
+    //             }
+    //         },
+    //         error: function(xhr, status, error) {
+    //             HideLoader();
+    //             console.error("AJAX Error:", error);
+    //             // alert("An error occurred while fetching data.");
+    //         },
+    //         complete: function() {
+    //             HideLoader();
                 
-            }
-        });
+    //         }
+    //     });
    
 }
 
@@ -560,6 +565,9 @@ function GenerateReceipt() {
     var transactionid = document.getElementById('transactionid').value.trim();
    var route_id = document.getElementById('route_id').value;
     var spot_id = document.getElementById('spot_id').value;
+    var receiptdate = document.getElementById('receiptdate').value;
+    var receiptno = document.getElementById('receiptno').value;
+
 // Field-specific validation
 if (!debithead) return HideLoader() & showErrorMessage("Please select Fee Head");
 if (!debitsession) return HideLoader() & showErrorMessage("Please select Session");
@@ -567,7 +575,8 @@ if (!debitsem) return HideLoader() & showErrorMessage("Please select Semester");
 if (!debitfee || isNaN(debitfee) || debitfee < 0) return HideLoader() & showErrorMessage("Please enter valid Amount");
 if (!studentIdNo) return HideLoader() & showErrorMessage("Please enter Student Roll No");
 if (!debitparticulars) return HideLoader() & showErrorMessage("Please enter Particulars");
-
+if (!receiptdate) return showErrorMessage("Please select receipt Date");
+    if (!receiptno) return showErrorMessage("Enter ReceiptNo");
 if (modeofpayment !== 'Cash') {
     if (!transactiondate) return HideLoader() & showErrorMessage("Please enter Transaction Date");
     if (!nameofbank) return HideLoader() & showErrorMessage("Please enter Bank Name");
@@ -600,7 +609,7 @@ if (debithead=='3'){
                 transactionid: transactionid,
                 transactiondate: transactiondate,
                 isChecked: isChecked,
-                entryType: entryType,
+                entryType: entryType,receiptdate :receiptdate,receiptno:receiptno,
                 IsOld: IsOld,route_id:route_id,spot_id:spot_id
             },
             success: function(response) {

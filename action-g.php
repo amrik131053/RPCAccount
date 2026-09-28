@@ -258,6 +258,8 @@ else {
         $SemesterID = $receipt['SemesterID'];
         $RouteID = $receipt['RouteID'];
         $SpotID = $receipt['SpotID'];
+        $newReceiptNo = $receipt['ReceiptNo'];
+        $ReceiptDate = $receipt['ReceiptDate'];
             
         $semesterName = getSemesterName($SemesterID);
         // 2. Fetch student data
@@ -298,86 +300,86 @@ else {
         $newTransactionId = sqlsrv_fetch_array($stmtMaxTransaction, SQLSRV_FETCH_ASSOC)['MaxTransactionID'] + 1;
     
         // 5. Get new ReceiptNo for the session
-if ($isOld != 1) {
+// if ($isOld != 1) {
       
  
-        // 5. Get new ReceiptNo for the session
+//         // 5. Get new ReceiptNo for the session
       
-     if($modeOfPayment == 'Cash') {
-    $sqlMaxReceipt = "SELECT MAX(ReceiptNo) AS MaxReceiptNo 
-                      FROM Ledger 
-                      WHERE Session = ? AND ModeOfPayment=?";
+//      if($modeOfPayment == 'Cash') {
+//     $sqlMaxReceipt = "SELECT MAX(ReceiptNo) AS MaxReceiptNo 
+//                       FROM Ledger 
+//                       WHERE Session = ? AND ModeOfPayment=?";
 
-$sqlMaxReceipt = "SELECT MAX(CAST(ReceiptNo AS INT)) AS MaxReceiptNo
-    FROM Ledger
-    WHERE Session =?
-      AND ModeOfPayment = ?
+// $sqlMaxReceipt = "SELECT MAX(CAST(ReceiptNo AS INT)) AS MaxReceiptNo
+//     FROM Ledger
+//     WHERE Session =?
+//       AND ModeOfPayment = ?
      
-      AND CAST(ReceiptNo AS INT) BETWEEN 1 AND 100000";
+//       AND CAST(ReceiptNo AS INT) BETWEEN 1 AND 100000";
 
 
-    $stmtMaxReceipt = sqlsrv_query($conn, $sqlMaxReceipt, [$session, $modeOfPayment]);
+//     $stmtMaxReceipt = sqlsrv_query($conn, $sqlMaxReceipt, [$session, $modeOfPayment]);
 
-} 
+// } 
 
-else if( $modeOfPayment == 'Receipt')
-{
+// else if( $modeOfPayment == 'Receipt')
+// {
 
-$sqlMaxReceipt = "SELECT MAX(CAST(ReceiptNo AS INT)) AS MaxReceiptNo
-    FROM Ledger
-    WHERE Session =?
-      AND ModeOfPayment = ?
+// $sqlMaxReceipt = "SELECT MAX(CAST(ReceiptNo AS INT)) AS MaxReceiptNo
+//     FROM Ledger
+//     WHERE Session =?
+//       AND ModeOfPayment = ?
      
-      AND CAST(ReceiptNo AS INT) BETWEEN 200000 AND 300000";
+//       AND CAST(ReceiptNo AS INT) BETWEEN 200000 AND 300000";
 
- $stmtMaxReceipt = sqlsrv_query($conn, $sqlMaxReceipt, [$session, $modeOfPayment]);
+//  $stmtMaxReceipt = sqlsrv_query($conn, $sqlMaxReceipt, [$session, $modeOfPayment]);
 
-//echo interpolateQuery($sqlMaxReceipt,[$session, $modeOfPayment]);
+// //echo interpolateQuery($sqlMaxReceipt,[$session, $modeOfPayment]);
 
 
-}
+// }
 
-else {
-    //$sqlMaxReceipt = "SELECT MAX(ReceiptNo) AS MaxReceiptNo 
-                    //  FROM Ledger 
-                    //  WHERE Session = ? AND ModeOfPayment!='Cash' AND ModeOfPayment!='Receipt'";
-  $sqlMaxReceipt = "SELECT MAX(CAST(ReceiptNo AS INT)) AS MaxReceiptNo
-    FROM Ledger
-    WHERE Session = ?
-      AND ModeOfPayment != 'Cash'
-      AND ModeOfPayment != 'Receipt'
-      AND CAST(ReceiptNo AS INT) BETWEEN 100000 AND 200000";
+// else {
+//     //$sqlMaxReceipt = "SELECT MAX(ReceiptNo) AS MaxReceiptNo 
+//                     //  FROM Ledger 
+//                     //  WHERE Session = ? AND ModeOfPayment!='Cash' AND ModeOfPayment!='Receipt'";
+//   $sqlMaxReceipt = "SELECT MAX(CAST(ReceiptNo AS INT)) AS MaxReceiptNo
+//     FROM Ledger
+//     WHERE Session = ?
+//       AND ModeOfPayment != 'Cash'
+//       AND ModeOfPayment != 'Receipt'
+//       AND CAST(ReceiptNo AS INT) BETWEEN 100000 AND 200000";
 
-    $stmtMaxReceipt = sqlsrv_query($conn, $sqlMaxReceipt, [$session]);
-}
-}
-else
-{
+//     $stmtMaxReceipt = sqlsrv_query($conn, $sqlMaxReceipt, [$session]);
+// }
+// }
+// else
+// {
 
      
-    $sqlMaxReceipt = "SELECT MAX(ReceiptNo) AS MaxReceiptNo 
-                      FROM Ledger 
-                      WHERE Session = ?";
-    $stmtMaxReceipt = sqlsrv_query($conn, $sqlMaxReceipt, [$session, $modeOfPayment]);
+//     $sqlMaxReceipt = "SELECT MAX(ReceiptNo) AS MaxReceiptNo 
+//                       FROM Ledger 
+//                       WHERE Session = ?";
+//     $stmtMaxReceipt = sqlsrv_query($conn, $sqlMaxReceipt, [$session, $modeOfPayment]);
 
 
 
-  } 
+//   } 
 
- $row = sqlsrv_fetch_array($stmtMaxReceipt, SQLSRV_FETCH_ASSOC);
+//  $row = sqlsrv_fetch_array($stmtMaxReceipt, SQLSRV_FETCH_ASSOC);
 
-    if ($modeOfPayment == 'Cash') {
+//     if ($modeOfPayment == 'Cash') {
 
-        $newReceiptNo = ($row['MaxReceiptNo'] ?? 0) + 1;
-      }
-      else if($modeOfPayment == 'Receipt')
-      {
- $newReceiptNo = ($row['MaxReceiptNo'] ?? 200000) + 1;
-      }
-      else
-      {
-         $newReceiptNo = ($row['MaxReceiptNo'] ?? 1000000) + 1;
-      }
+//         $newReceiptNo = ($row['MaxReceiptNo'] ?? 0) + 1;
+//       }
+//       else if($modeOfPayment == 'Receipt')
+//       {
+//  $newReceiptNo = ($row['MaxReceiptNo'] ?? 200000) + 1;
+//       }
+//       else
+//       {
+//          $newReceiptNo = ($row['MaxReceiptNo'] ?? 1000000) + 1;
+//       }
 
         // 6. Prepare Ledger insert (Credit)
         if ($modeOfPayment == 'Cash') {
@@ -387,7 +389,7 @@ else
                 (Session, CollegeName, TransactionID, DateEntry, IDNo, UniRollNo, StudentName, FatherName, MotherName, Course, Batch, ClassRollNo, Semester, SemesterID, FeeCategory, Sex, OnAccountOf, Particulars, Credit, LedgerName, TransactionType, UserID, ValueDate, ReceiptNo, ModeOfPayment, printReceiptTableID,HeadID,RouteID,SpotID)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
             $paramsLedger = [
-                $session, $CollegeName, $newTransactionId, $smallDateTime, $IDNo, $UniRollNo, $StudentName, $FatherName, $MotherName,
+                $session, $CollegeName, $newTransactionId, $ReceiptDate, $IDNo, $UniRollNo, $StudentName, $FatherName, $MotherName,
                 $Course, $Batch, $ClassRollNo, $semesterName, $receipt['SemesterID'], $FeeCategory, $Sex,
                 $particulars, $particulars." by $modeOfPayment Receipt No: $newReceiptNo", $creditAmount, $debitHead,
                 'Credit', $receipt['CreatedBy'], date('Y-m-d H:i:s'), $newReceiptNo, $modeOfPayment, $receiptid,$HeadID,$RouteID,$SpotID
@@ -395,16 +397,13 @@ else
 
      
 
-
-
-
         } else {
             // Bank Payment
              $sqlInsertLedger = "INSERT INTO Ledger
                 (Session, CollegeName, TransactionID, DateEntry, IDNo, UniRollNo, StudentName, FatherName, MotherName, Course, Batch, ClassRollNo, Semester, SemesterID, FeeCategory, Sex, OnAccountOf, Particulars, Credit, LedgerName, TransactionType, UserID, ValueDate, ReceiptNo, ChequeDraftBank, ChequeDraftNo, DateEntrySubmission, ModeOfPayment, printReceiptTableID,HeadID,RouteID,SpotID)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
             $paramsLedger = [
-                $session, $CollegeName, $newTransactionId, $smallDateTime, $IDNo, $UniRollNo, $StudentName, $FatherName, $MotherName,
+                $session, $CollegeName, $newTransactionId, $ReceiptDate, $IDNo, $UniRollNo, $StudentName, $FatherName, $MotherName,
                 $Course, $Batch, $ClassRollNo, $semesterName, $receipt['SemesterID'], $FeeCategory, $Sex,
                 $particulars, $particulars." by $modeOfPayment Receipt No: $newReceiptNo", $creditAmount, $debitHead,
                 'Credit', $receipt['CreatedBy'], date('Y-m-d H:i:s'), $newReceiptNo,
@@ -2040,6 +2039,9 @@ else if ($code == 19) {
     $nameofbank = $_POST['nameofbank'];
     $transactionid = $_POST['transactionid'];
     $transactiondate = $_POST['transactiondate'];
+    $receiptdate = $_POST['receiptdate'];
+    $receiptno = $_POST['receiptno'];
+  
 
         $routeId = $_POST['route_id'];
         $spotid = $_POST['spot_id'];
@@ -2090,15 +2092,20 @@ else if ($code == 19) {
     $bankTransactionDate = date('Y-m-d H:i:s', strtotime($transactiondate));
     if ($modeofpayment == 'Cash') {
         $sql = "INSERT INTO PrintReceipt 
-        (DateEntry, CollegeName, IDNo, StudentName, Course, FatherName, Particulars, Credit, DebitHead, Session, SemesterID, CreatedBy, CreatedDate, ModeOfPayment, AutoDebit, Status, IsOld,HeadID,RouteID,SpotID)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
-        $params = [$smallDateTime, $CollegeName, $IDNo, $StudentName, $Course, $FatherName, $debitparticulars, $debitfee, $head, $debitsession, $debitsem, $EmployeeID, $dateTime, $modeofpayment, $isChecked, 0, $isOldStatus,$debithead,$routeId,$spotid];
+        (DateEntry, CollegeName, IDNo, StudentName, Course, FatherName, Particulars, Credit, DebitHead, Session, SemesterID, CreatedBy, CreatedDate, ModeOfPayment, AutoDebit, Status, IsOld,HeadID,RouteID,SpotID,ReceiptNo,ReceiptDate)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)";
+        $params = [$smallDateTime, $CollegeName, $IDNo, $StudentName, $Course, $FatherName, $debitparticulars, $debitfee, $head, $debitsession, $debitsem, $EmployeeID, $dateTime, $modeofpayment, $isChecked, 0, $isOldStatus,$debithead,$routeId,$spotid,$receiptno,$receiptdate];
     } else {
         $sql = "INSERT INTO PrintReceipt 
-        (DateEntry, CollegeName, IDNo, StudentName, Course, FatherName, Particulars, Credit, DebitHead, Session, SemesterID, CreatedBy, CreatedDate, ModeOfPayment, BankName, TransactionNo, TransactionDate, AutoDebit, Status, IsOld,HeadID,RouteID,SpotID)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
-        $params = [$smallDateTime, $CollegeName, $IDNo, $StudentName, $Course, $FatherName, $debitparticulars, $debitfee, $head, $debitsession, $debitsem, $EmployeeID, $dateTime, $modeofpayment, $nameofbank, $transactionid, $bankTransactionDate, $isChecked, 0, $isOldStatus,$debithead,$routeId,$spotid];
+        (DateEntry, CollegeName, IDNo, StudentName, Course, FatherName, Particulars, Credit, DebitHead, Session, SemesterID, CreatedBy, CreatedDate, ModeOfPayment, BankName, TransactionNo, TransactionDate, AutoDebit, Status, IsOld,HeadID,RouteID,SpotID,ReceiptNo,ReceiptDat)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)";
+        $params = [$smallDateTime, $CollegeName, $IDNo, $StudentName, $Course, $FatherName, $debitparticulars, $debitfee, $head, $debitsession, $debitsem, $EmployeeID, $dateTime, $modeofpayment, $nameofbank, $transactionid, $bankTransactionDate, $isChecked, 0, $isOldStatus,$debithead,$routeId,$spotid,$receiptno,$receiptdate];
     }
+
+
+    // echo interpolateQuery($sql,$params);
+
+
 
     $queryRemarks = "New PrintReceipt created  Mode: $modeofpayment, Amount: $debitfee, Head: $head";
     $logbookSql = "INSERT INTO logbook (userid, remarks, updatedby, date) VALUES (?, ?, ?, ?)";
@@ -2106,6 +2113,10 @@ else if ($code == 19) {
     sqlsrv_query($conn, $logbookSql, $logbookParams);
     
     $stmt = sqlsrv_query($conn, $sql, $params);
+
+
+
+
     if ($stmt) {
         if ($entryType == 0) {
             $idQuery = "SELECT TOP 1 ID FROM PrintReceipt ORDER BY ID DESC";
@@ -2119,7 +2130,7 @@ else if ($code == 19) {
         }
     } else {
         // echo "0";
-        echo json_encode(["status" => '0', "message" => "Receipt Generated"]);
+        echo json_encode(["status" => '0', "message" => "Receipt not Generated"]);
     }
 }
 

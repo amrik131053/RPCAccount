@@ -383,6 +383,8 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
             <label class="form-label" style="color: brown">Credit (Amount)</label>
             <input type="number" class="form-control " Name="feedebit" id='debitfee'>
+             <label class="form-label" style="color: brown">Receipt Date</label>
+            <input type="date" class="form-control " Name="Receiptdate" id='receiptdate'>
 
 
 
@@ -426,8 +428,11 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 <option value="Bank Transfer">Bank Transfer</option>
                  <option value="Receipt">Receipt</option>
             </Select>
-        </div>
+        
 
+           <label class="form-label" style="color: brown">Receipt Number</label>
+            <input type="number" class="form-control " Name="receiptno" id='receiptno'>
+            </div>
         <div class="container" id="modepaymnetdiv" style="display:none">
 
             <div class="row col-lg-12">
@@ -472,9 +477,9 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 
         <div class="d-flex flex-wrap align-items-center justify-content-between">
-            <button class="btn btn-primary btn-sm mb-2 mb-lg-0" id="feedebitbutton" onclick="CreateReceipt()">
+            <!-- <button class="btn btn-primary btn-sm mb-2 mb-lg-0" id="feedebitbutton" onclick="CreateReceipt()">
                 Create Entry
-            </button>
+            </button> -->
 
             
 
